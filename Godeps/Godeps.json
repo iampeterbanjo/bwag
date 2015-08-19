@@ -1,0 +1,15 @@
+{
+	"ImportPath": "building-web-apps-with-go/fileserver",
+	"GoVersion": "go1.4.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/russross/blackfriday",
+			"Comment": "v1.2-80-g8cec3a8",
+			"Rev": "8cec3a854e68dba10faabbe31c089abf4a3e57a6"
+		},
+		{
+			"ImportPath": "github.com/shurcooL/sanitized_anchor_name",
+			"Rev": "11a20b799bf22a02808c862eb6ca09f7fb38f84a"
+		}
+	]
+}
