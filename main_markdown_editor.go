@@ -1,4 +1,4 @@
-package main
+package main_markdown_editor
 
 import (
 	"net/http"

@@ -1,4 +1,4 @@
-package main
+package main_rendering
 
 import (
 	"html/template"
