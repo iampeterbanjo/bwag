@@ -17,8 +17,8 @@ func main() {
 	// Middleware stack
 	n := negroni.New(
 		negroni.NewRecovery(),
-		negroni.HandlerFunc(MyMiddleware),
 		negroni.HandlerFunc(LetMeGoogleThatForYou),
+		negroni.HandlerFunc(MyMiddleware),
 		negroni.NewLogger(),
 		negroni.NewStatic(http.Dir("public")),
 	)
@@ -38,9 +38,12 @@ func MyMiddleware(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc
 	log.Println("Logging on the way back")
 }
 
-func LetMeGoogleThatForYou(rw http.ResponseWriter, r *http.Request, http.HandlerFunc) {
-	if r.URL.Query().Get("question") != "" {
-		r.redirect("www.google.com")
+func LetMeGoogleThatForYou(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	question := r.URL.Query().Get("question")
+	redirectUrl := "http://lmgtfy.com/?q="
+
+	if question != "" {
+		http.Redirect(rw, r, redirectUrl + question, http.StatusTemporaryRedirect)
 	} else {
 		next(rw, r)
 	}
