@@ -1,17 +1,11 @@
 package main
 
 import (
-	"html/template"
 	"net/http"
 	"os"
-	"path"
-	"log"
+	"gopkg.in/unrolled/render.v1"
+	"fmt"
 )
-
-type Book struct {
-	Title  string `json:"title"`
-	Author string `json:"author"`
-}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -19,22 +13,27 @@ func main() {
 		port = "8080"
 	}
 
-	log.Println("listening on " + port)
-	http.HandleFunc("/", ShowBooks)
-	http.ListenAndServe(":" + port, nil)
-}
+	r := render.New(render.Options{})
+	mux := http.NewServeMux()
 
-func ShowBooks(w http.ResponseWriter, r *http.Request) {
-	book := Book{"Building Web Apps with Go", "Jeremy Saenz"}
+	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		w.Write([]byte("Welcome, visit sub pages now"))
+	})
 
-	fp := path.Join("templates", "index.html")
-	tmpl, err := template.ParseFiles(fp)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	mux.HandleFunc("/data", func(w http.ResponseWriter, req *http.Request) {
+		r.Data(w, http.StatusOK, []byte("Some binary data here."))
+	})
 
-	if err := tmpl.Execute(w, book); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	mux.HandleFunc("/json", func(w http.ResponseWriter, req *http.Request) {
+		r.JSON(w, http.StatusOK, map[string]string{"hello": "json"})
+	})
+
+	mux.HandleFunc("/html", func(w http.ResponseWriter, req *http.Request) {
+		// Assumes you have a template in ./templates called "example.tmpl"
+		// $ mkdir -p templates && echo "<h1>Hello {{.}}.</h1>" > templates/example.tmpl
+		r.HTML(w, http.StatusOK, "example", "world")
+	})
+
+	fmt.Println("Listening on " + port)
+	http.ListenAndServe(":" + port, mux)
 }
