@@ -18,6 +18,7 @@ func main() {
 	n := negroni.New(
 		negroni.NewRecovery(),
 		negroni.HandlerFunc(MyMiddleware),
+		negroni.HandlerFunc(LetMeGoogleThatForYou),
 		negroni.NewLogger(),
 		negroni.NewStatic(http.Dir("public")),
 	)
@@ -25,7 +26,7 @@ func main() {
 	n.Run(":" + port)
 }
 
-func MyMiddleware(rw http.ResponseWriter, r * http.Request, next http.HandlerFunc) {
+func MyMiddleware(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	log.Println("Logging on the way there")
 
 	if r.URL.Query().Get("password") == "secret123" {
@@ -35,4 +36,12 @@ func MyMiddleware(rw http.ResponseWriter, r * http.Request, next http.HandlerFun
 	}
 
 	log.Println("Logging on the way back")
+}
+
+func LetMeGoogleThatForYou(rw http.ResponseWriter, r *http.Request, http.HandlerFunc) {
+	if r.URL.Query().Get("question") != "" {
+		r.redirect("www.google.com")
+	} else {
+		next(rw, r)
+	}
 }
