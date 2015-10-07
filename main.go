@@ -13,7 +13,7 @@ func HelloWorld(res http.ResponseWriter, req *http.Request, p httprouter.Params)
 }
 
 func App() http.Handler {
-	n := negroni.Classic()
+	n := negroni.New()
 
 	m := func(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 		fmt.Fprint(res, "Before...")
